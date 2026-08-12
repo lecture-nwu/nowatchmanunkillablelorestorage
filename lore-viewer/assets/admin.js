@@ -1,6 +1,20 @@
 (function () {
   "use strict";
 
+  // 메인 페이지의 좌측 메뉴를 거치지 않고 admin.html에 직접 접속한 경우를 대비한 최소한의 저지선.
+  // 정적 사이트라 완벽한 보안은 아니며, 실제 데이터 커밋에는 별도의 GitHub 토큰이 필요합니다.
+  const ADMIN_PASSWORD = "lore-admin-2026";
+  const LS_ADMIN_AUTH = "loreArchive.adminAuth";
+  if (sessionStorage.getItem(LS_ADMIN_AUTH) !== "1") {
+    const pw = window.prompt("관리자 비밀번호를 입력하세요.");
+    if (pw !== ADMIN_PASSWORD) {
+      alert("비밀번호가 올바르지 않습니다.");
+      location.href = "index.html";
+      return;
+    }
+    sessionStorage.setItem(LS_ADMIN_AUTH, "1");
+  }
+
   const LS_SETTINGS = "loreArchive.settings";
   const LS_DATA = "loreArchive.draft";
 
@@ -211,7 +225,7 @@
         <div class="list-row">
           <div>
             <div>${escapeHtml(e.title)}</div>
-            <div class="list-row__meta">${escapeHtml(byColl[e.collectionId] || "미분류")} · 순서 ${e.order ?? 0}</div>
+            <div class="list-row__meta">${escapeHtml(byColl[e.collectionId] || "미분류")} · 순서 ${e.order ?? 0}${(e.tags && e.tags.length) ? " · " + e.tags.map((t) => "#" + t).join(" ") : ""}</div>
           </div>
           <div class="list-row__actions">
             <button data-edit="${e.id}">편집</button>
@@ -239,6 +253,7 @@
     el("entryTitle").value = entry.title;
     el("entrySub").value = entry.subtitle || "";
     el("entryOrder").value = entry.order ?? 1;
+    el("entryTags").value = (entry.tags || []).join(", ");
     el("entryBody").value = entry.body || "";
     el("btnSaveEntry").textContent = "기록 수정 저장";
     el("btnClearEntry").style.display = "inline-block";
@@ -248,7 +263,7 @@
   function resetEntryForm() {
     editingEntryId = null;
     el("entryTitle").value = ""; el("entrySub").value = "";
-    el("entryOrder").value = 1; el("entryBody").value = "";
+    el("entryOrder").value = 1; el("entryTags").value = ""; el("entryBody").value = "";
     el("btnSaveEntry").textContent = "기록 추가";
     el("btnClearEntry").style.display = "none";
   }
@@ -264,6 +279,7 @@
       title,
       subtitle: el("entrySub").value.trim(),
       order: Number(el("entryOrder").value) || 0,
+      tags: el("entryTags").value.split(",").map((t) => t.trim()).filter(Boolean),
       body: el("entryBody").value,
     };
     if (editingEntryId) {

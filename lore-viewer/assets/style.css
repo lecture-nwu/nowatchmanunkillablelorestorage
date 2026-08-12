@@ -60,6 +60,109 @@ body{
   height:100vh;
 }
 
+/* ---------- 좌측 끝 호버 메뉴 ---------- */
+.edge-trigger{
+  position:fixed; top:0; left:0; width:14px; height:100vh; z-index:40;
+}
+.side-menu{
+  position:fixed; top:0; left:0; height:100vh; z-index:41;
+  display:flex; align-items:stretch;
+  transform:translateX(calc(-100% + 6px));
+  transition: transform .3s var(--ease);
+}
+.side-menu.is-open{ transform:translateX(0); }
+.side-menu__tab{
+  width:6px; align-self:center; height:64px; margin:auto 0;
+  background:var(--bronze); border-radius:0 3px 3px 0; opacity:.55;
+  cursor:pointer; transition: opacity .2s var(--ease), width .2s var(--ease);
+}
+.side-menu:hover .side-menu__tab, .side-menu.is-open .side-menu__tab{ opacity:.9; }
+.side-menu__panel{
+  width:236px; height:100%; overflow-y:auto;
+  background:linear-gradient(180deg, var(--panel-raised), var(--void));
+  border-right:1px solid var(--line-strong);
+  box-shadow: var(--shadow);
+  padding:24px 18px; display:flex; flex-direction:column; gap:4px;
+}
+.side-menu__brand{
+  font-family:'Noto Serif KR', serif; font-weight:700; letter-spacing:.2em;
+  font-size:13px; color:var(--bronze); text-transform:uppercase; margin-bottom:4px;
+}
+.side-menu__user{
+  font-size:11.5px; color:var(--mist); margin-bottom:16px;
+  font-family:'JetBrains Mono', monospace; letter-spacing:.03em;
+}
+.side-menu__item{
+  display:block; width:100%; text-align:left;
+  background:transparent; border:1px solid transparent; border-radius:var(--radius);
+  color:var(--parchment); font-family:'Noto Sans KR', sans-serif; font-size:13.5px;
+  padding:11px 12px; cursor:pointer;
+  transition: background .2s var(--ease), border-color .2s var(--ease), color .2s var(--ease);
+}
+.side-menu__item:hover{ background:rgba(201,168,118,.08); border-color:var(--line); }
+.side-menu__item.is-active{ color:var(--bronze); border-color:var(--line-strong); background:rgba(201,168,118,.06); }
+.side-menu__item--admin{ color:var(--ember); }
+.side-menu__item--admin:hover{ background:rgba(179,84,58,.12); border-color:rgba(179,84,58,.4); }
+.side-menu__divider{ height:1px; background:var(--line); margin:10px 0; }
+
+/* ---------- 모달 ---------- */
+.modal-overlay{
+  position:fixed; inset:0; z-index:60; display:none;
+  align-items:center; justify-content:center;
+  background:rgba(10,12,18,.72); backdrop-filter:blur(2px);
+}
+.modal-overlay.is-open{ display:flex; }
+.modal{
+  width:min(360px, 90vw); background:var(--panel-raised);
+  border:1px solid var(--line-strong); border-radius:var(--radius);
+  box-shadow:var(--shadow); padding:22px;
+}
+.modal__title{
+  font-family:'Noto Serif KR', serif; font-weight:700; font-size:15px;
+  color:var(--parchment); margin-bottom:14px;
+}
+.modal__input{
+  width:100%; background:var(--void); border:1px solid var(--line);
+  color:var(--parchment); padding:10px 12px; border-radius:var(--radius);
+  font-family:'Noto Sans KR', sans-serif; font-size:13.5px;
+}
+.modal__input:focus{ border-color:var(--bronze); }
+.modal__error{
+  font-size:11.5px; color:#e08a6f; min-height:16px; margin-top:8px;
+}
+.modal__actions{ display:flex; justify-content:flex-end; gap:10px; margin-top:12px; }
+
+/* ---------- 즐겨찾기 / 태그 ---------- */
+.entry-item{ position:relative; }
+.entry-item__star{
+  position:absolute; top:10px; right:8px;
+  background:none; border:none; cursor:pointer;
+  font-size:15px; color:var(--line-strong); line-height:1; padding:4px;
+}
+.entry-item__star:hover{ color:var(--bronze); }
+.entry-item__star.is-fav{ color:var(--bronze); }
+.entry-item__tags{ display:flex; flex-wrap:wrap; gap:4px; margin-top:6px; }
+.tag-chip{
+  font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:.04em;
+  color:var(--bronze-dim); border:1px solid var(--line); border-radius:10px;
+  padding:2px 8px;
+}
+.tag-cloud{ display:flex; flex-wrap:wrap; gap:8px; padding:14px 16px; }
+.tag-cloud__item{
+  background:transparent; border:1px solid var(--line-strong); border-radius:14px;
+  color:var(--parchment); font-size:12.5px; padding:6px 14px; cursor:pointer;
+  font-family:'Noto Sans KR', sans-serif;
+  transition: background .2s var(--ease), color .2s var(--ease);
+}
+.tag-cloud__item:hover{ background:rgba(201,168,118,.1); color:var(--bronze); }
+.tag-cloud__count{ color:var(--mist); font-size:10.5px; margin-left:4px; }
+.roster__back{
+  margin:10px 16px 0; background:none; border:none; color:var(--mist);
+  font-size:12px; cursor:pointer; text-align:left; padding:2px;
+}
+.roster__back:hover{ color:var(--bronze); }
+.reader__tags{ display:flex; flex-wrap:wrap; gap:6px; margin:-8px 0 24px; }
+
 /* ---------- 1열: 문서철 스파인 ---------- */
 .spine{
   border-right:1px solid var(--line);
@@ -213,6 +316,7 @@ body{
   .roster{ border-right:none; border-bottom:1px solid var(--line); max-height:280px; }
   .reader__inner{ padding:36px 22px 80px; }
   .reader__title{ font-size:28px; }
+  .side-menu__panel{ width:78vw; max-width:280px; }
 }
 
 @media (prefers-reduced-motion: reduce){
