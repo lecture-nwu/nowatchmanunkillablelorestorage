@@ -349,8 +349,8 @@
   function inscriptionSVG() {
     return (
       '<svg class="inscription" viewBox="0 0 300 22" preserveAspectRatio="none" aria-hidden="true">' +
-      '<path d="M0 11 L120 11 L128 4 L136 18 L144 11 L300 11" />' +
-      '<circle cx="136" cy="18" r="2.5" />' +
+      '<path d="M0 11 L300 11" />' +
+      '<circle cx="150" cy="11" r="2.5" />' +
       "</svg>"
     );
   }

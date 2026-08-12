@@ -1,7 +1,8 @@
 /* ==========================================================================
    LORE ARCHIVE — 디자인 토큰
    Color   : Void(#0A0C12) / Panel(#12161F) / Bronze(#C9A876) / Ember(#B3543A) / Parchment(#E8E4DA) / Mist(#7A8092)
-   Type    : Display = Jibaek / Body = Pretendard / Utility = JetBrains Mono
+   Type    : Display = Jibaek(사이트 제목·열람 제목·가로 문서철 제목) / AppleSDGothicNeoB(그 외 제목류)
+             AppleSDGothicNeoT(태그) / Body = Pretendard / Utility = JetBrains Mono
    Layout  : 3열 — 문서철(Books) 세로 스파인 · 기록 목록 · 열람 패널
    Signature: 기록을 열 때 그려지는 "각인선(inscription line)" SVG 디바이더
    ========================================================================== */
@@ -16,6 +17,8 @@
 
 :root{
   --font-title:'Jibaek', 'Noto Serif KR', serif;
+  --font-title-alt:'AppleSDGothicNeoB', 'Apple SD Gothic Neo', var(--font-body);
+  --font-tag:'AppleSDGothicNeoT', 'Apple SD Gothic Neo', var(--font-body);
   --font-body:'Pretendard', 'Noto Sans KR', sans-serif;
   --void:#0A0C12;
   --panel:#12161F;
@@ -128,7 +131,7 @@ body{
   box-shadow:var(--shadow); padding:22px;
 }
 .modal__title{
-  font-family:var(--font-title); font-weight:700; font-size:15px;
+  font-family:var(--font-title-alt); font-weight:700; font-size:15px;
   color:var(--parchment); margin-bottom:14px;
 }
 .modal__input{
@@ -153,7 +156,7 @@ body{
 .entry-item__star.is-fav{ color:var(--bronze); }
 .entry-item__tags{ display:flex; flex-wrap:wrap; gap:4px; margin-top:6px; }
 .tag-chip{
-  font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:.04em;
+  font-family:var(--font-tag); font-size:10px; letter-spacing:.04em;
   color:var(--bronze-dim); border:1px solid var(--line); border-radius:10px;
   padding:2px 8px;
 }
@@ -161,7 +164,7 @@ body{
 .tag-cloud__item{
   background:transparent; border:1px solid var(--line-strong); border-radius:14px;
   color:var(--parchment); font-size:12.5px; padding:6px 14px; cursor:pointer;
-  font-family:var(--font-body);
+  font-family:var(--font-tag);
   transition: background .2s var(--ease), color .2s var(--ease);
 }
 .tag-cloud__item:hover{ background:rgba(201,168,118,.1); color:var(--bronze); }
@@ -193,7 +196,7 @@ body{
   writing-mode:vertical-rl;
   width:44px; padding:14px 0;
   margin-bottom:6px;
-  font-family:var(--font-title); font-size:13px; font-weight:600;
+  font-family:var(--font-title-alt); font-size:13px; font-weight:600;
   letter-spacing:.18em;
   color:var(--mist);
   background:transparent; border:1px solid transparent; border-radius:var(--radius);
@@ -248,7 +251,7 @@ body{
   letter-spacing:.1em;
 }
 .entry-item__title{
-  font-family:var(--font-title); font-size:14.5px; font-weight:600;
+  font-family:var(--font-title-alt); font-size:14.5px; font-weight:600;
   color:var(--parchment); margin-top:3px; line-height:1.4;
 }
 .entry-item__sub{
@@ -274,7 +277,7 @@ body{
   font-size:36px; line-height:1.3; margin:0 0 10px; color:var(--parchment);
 }
 .reader__subtitle{
-  font-family:var(--font-title); font-style:italic; font-weight:400;
+  font-family:var(--font-body); font-style:italic; font-weight:400;
   font-size:16px; color:var(--bronze); margin:0 0 28px; line-height:1.6;
 }
 
@@ -295,7 +298,7 @@ body{
 }
 .reader__body p{ margin:0 0 1.3em; }
 .reader__body h1, .reader__body h2, .reader__body h3{
-  font-family:var(--font-title); color:var(--parchment); line-height:1.4;
+  font-family:var(--font-title-alt); color:var(--parchment); line-height:1.4;
   margin:1.4em 0 .6em;
 }
 .reader__body h1{ font-size:1.5em; }
@@ -332,7 +335,7 @@ body{
   height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center;
   color:var(--mist); text-align:center; gap:10px;
 }
-.reader__empty-mark{ font-size:28px; color:var(--bronze-dim); font-family:var(--font-title); }
+.reader__empty-mark{ font-size:28px; color:var(--bronze-dim); font-family:var(--font-title-alt); }
 .reader__empty-text{ font-size:13px; max-width:280px; line-height:1.7; }
 
 /* 스크롤바 */
@@ -371,7 +374,7 @@ body{
 }
 .admin__header{ margin-bottom:32px; }
 .admin__title{
-  font-family:var(--font-title); font-weight:700; font-size:28px; margin:0 0 8px;
+  font-family:var(--font-title-alt); font-weight:700; font-size:28px; margin:0 0 8px;
 }
 .admin__desc{ color:var(--mist); font-size:13.5px; line-height:1.7; margin:0; max-width:640px; }
 
@@ -380,7 +383,7 @@ body{
   padding:26px; margin-bottom:22px;
 }
 .card__title{
-  font-family:var(--font-title); font-size:16px; font-weight:700; margin:0 0 16px;
+  font-family:var(--font-title-alt); font-size:16px; font-weight:700; margin:0 0 16px;
   color:var(--bronze);
 }
 .field{ margin-bottom:16px; }

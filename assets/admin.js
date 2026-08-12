@@ -210,26 +210,21 @@
       return;
     }
 
+    // "저장소에서 불러오기"를 거치지 않고 바로 커밋하면 currentSha를 몰라 새 파일 생성으로
+    // 취급되어, 이미 존재하는 파일에 대해 GitHub가 "sha wasn't supplied" 오류를 낸다.
+    // 커밋 직전에 기존 파일의 sha를 조용히 한 번 더 확인해 이 문제를 막는다.
+    if (!currentSha) currentSha = await fetchExistingSha(s);
+
     showStatus($commitStatus, "커밋하는 중...", "info");
     try {
-      const content = JSON.stringify({ collections: data.collections, entries: data.entries }, null, 2);
-      const body = {
-        message: "기록 갱신 (" + new Date().toISOString() + ")",
-        content: utf8ToBase64(content),
-        branch: s.branch,
-      };
-      if (currentSha) body.sha = currentSha;
+      let { res, json } = await putContents(s, currentSha);
 
-      const res = await fetch(apiUrl(s).split("?")[0], {
-        method: "PUT",
-        headers: {
-          Accept: "application/vnd.github+json",
-          Authorization: "token " + s.token,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      });
-      const json = await res.json();
+      // 위 사전 확인에도 불구하고(경쟁 상태 등으로) 동일한 오류가 나면 sha를 다시 조회해 한 번만 재시도.
+      if (!res.ok && !currentSha && /sha/i.test(json.message || "")) {
+        currentSha = await fetchExistingSha(s);
+        if (currentSha) ({ res, json } = await putContents(s, currentSha));
+      }
+
       if (!res.ok) {
         const detail = res.status === 403 && /not accessible/i.test(json.message || "")
           ? (json.message || "") + "\n\n" + PERMISSION_CHECKLIST
@@ -241,6 +236,42 @@
     } catch (err) {
       showStatus($commitStatus, "커밋 실패: " + err.message, "err");
     }
+  }
+
+  // 현재 저장소에 이미 존재하는 data 파일의 sha를 조회한다. 파일이 아직 없으면(404) null을 반환.
+  async function fetchExistingSha(s) {
+    try {
+      const res = await fetch(apiUrl(s), {
+        headers: { Accept: "application/vnd.github+json", Authorization: "token " + s.token },
+      });
+      if (!res.ok) return null;
+      const json = await res.json();
+      return json.sha || null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  async function putContents(s, sha) {
+    const content = JSON.stringify({ collections: data.collections, entries: data.entries }, null, 2);
+    const body = {
+      message: "기록 갱신 (" + new Date().toISOString() + ")",
+      content: utf8ToBase64(content),
+      branch: s.branch,
+    };
+    if (sha) body.sha = sha;
+
+    const res = await fetch(apiUrl(s).split("?")[0], {
+      method: "PUT",
+      headers: {
+        Accept: "application/vnd.github+json",
+        Authorization: "token " + s.token,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+    const json = await res.json();
+    return { res, json };
   }
 
   function downloadJson() {

@@ -3,7 +3,12 @@
 가상 창작 텍스트를 데스티니 가디언즈의 로어 뷰어 스타일로 열람할 수 있는 정적 홈페이지.
 GitHub Pages로 배포해 링크만 공유하면 친구들이 바로 열람 가능.
 
-타이프페이스: 제목 = Jibaek(`assets/fonts/jibaek.otf`, 자체 호스팅) · 본문 = Pretendard(CDN) · 유틸리티 = JetBrains Mono(CDN).
+타이프페이스:
+- **Jibaek**(`assets/fonts/jibaek.otf`, 자체 호스팅): 사이트 제목("LORE ARCHIVE"), 기록 열람 시의 제목, 가로로 쓰인 문서철 제목(로스터 헤더)
+- **AppleSDGothicNeoB**(macOS/iOS 시스템 폰트, 없는 기기는 Pretendard로 대체): 그 외 제목류 — 문서철 내부 기록 제목, 좌측 스파인의 세로 문서철 버튼, 관리자 페이지 제목 등
+- **AppleSDGothicNeoT**(macOS/iOS 시스템 폰트, 없는 기기는 Pretendard로 대체): 태그 텍스트
+- **Pretendard**(CDN): 본문 전반
+- **JetBrains Mono**(CDN): RECORD 번호, 타임스탬프 등 유틸리티 텍스트
 
 ## 구성
 
