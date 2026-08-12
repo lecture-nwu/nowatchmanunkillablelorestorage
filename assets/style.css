@@ -345,11 +345,13 @@ body{
 
 /* 모바일 */
 @media (max-width:860px){
+  html, body{ height:auto; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; }
   .app{ grid-template-columns:1fr; grid-template-rows:auto auto 1fr; height:auto; min-height:100vh; }
-  .spine{ flex-direction:row; border-right:none; border-bottom:1px solid var(--line); padding:10px; overflow-x:auto; }
+  .spine{ flex-direction:row; border-right:none; border-bottom:1px solid var(--line); padding:10px; overflow-x:auto; -webkit-overflow-scrolling:touch; }
   .spine__brand{ display:none; }
   .spine__book{ writing-mode:horizontal-tb; padding:8px 14px; }
-  .roster{ border-right:none; border-bottom:1px solid var(--line); max-height:280px; }
+  .roster{ border-right:none; border-bottom:1px solid var(--line); max-height:280px; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+  .reader{ overflow-y:visible; }
   .reader__inner{ padding:36px 22px 80px; }
   .reader__title{ font-size:28px; }
   .side-menu__panel{ width:78vw; max-width:280px; }
@@ -426,6 +428,7 @@ body{
 .status{
   font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:.05em;
   padding:10px 12px; border-radius:var(--radius); margin-top:14px; display:none;
+  white-space:pre-line; line-height:1.6;
 }
 .status.is-visible{ display:block; }
 .status--ok{ background:rgba(201,168,118,.1); color:var(--bronze); border:1px solid var(--line-strong); }

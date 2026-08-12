@@ -119,6 +119,49 @@
     return `https://api.github.com/repos/${s.owner}/${s.repo}/contents/${s.path}?ref=${encodeURIComponent(s.branch)}`;
   }
 
+  const PERMISSION_CHECKLIST =
+    "다음을 순서대로 확인해 보세요:\n" +
+    "1) 토큰을 만든 GitHub 계정이 이 저장소의 소유자(owner)이거나, 소유자가 아니라면 이 저장소에 " +
+    "Write 이상 권한을 가진 '협업자(collaborator)'로 초대되어 있는지. " +
+    "(fine-grained PAT는 초대받은 협업자 권한으로는 쓰기가 거부되는 경우가 많습니다)\n" +
+    "2) 토큰 생성 화면의 'Resource owner'가 이 저장소를 소유한 계정/조직과 정확히 일치하는지\n" +
+    "3) 토큰의 'Repository access'에서 'Only select repositories'를 고르고 이 저장소를 직접 선택했는지 " +
+    "(전체 공개 저장소 기본값은 읽기 전용만 허용됩니다)\n" +
+    "4) 토큰 권한 목록의 'Contents' 항목이 'Read-only'가 아닌 'Read and write'로 설정되어 있는지\n" +
+    "5) 저장소가 조직(organization) 소유라면, 조직 Settings → Personal access tokens에서 " +
+    "이 fine-grained 토큰이 관리자 승인(approve)되어 있는지\n" +
+    "6) 토큰이 만료되지 않았는지";
+
+  // 실제로 PUT을 시도하기 전에 GET /repos/{owner}/{repo}로 이 토큰의 push 권한을 먼저 확인해,
+  // 커밋 시도 없이도 더 구체적인 원인을 안내할 수 있게 함.
+  async function checkTokenAccess(s) {
+    try {
+      const res = await fetch(`https://api.github.com/repos/${s.owner}/${s.repo}`, {
+        headers: { Accept: "application/vnd.github+json", Authorization: "token " + s.token },
+      });
+      if (res.status === 404) {
+        return { ok: false, reason: "저장소를 찾을 수 없습니다(HTTP 404). 사용자명/저장소 이름 철자를 확인하거나, " +
+          "토큰의 저장소 접근 목록에 이 저장소가 포함되어 있는지 확인하세요." };
+      }
+      if (res.status === 401) {
+        const json = await res.json().catch(() => ({}));
+        return { ok: false, reason: (json.message || "인증에 실패했습니다.") + " 토큰이 올바른지, 만료되지 않았는지 확인하세요." };
+      }
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}));
+        return { ok: false, reason: (json.message || ("HTTP " + res.status)) + "\n\n" + PERMISSION_CHECKLIST };
+      }
+      const json = await res.json();
+      if (!json.permissions || !json.permissions.push) {
+        return { ok: false, reason: "이 토큰 계정은 저장소에 쓰기(push) 권한이 없습니다.\n\n" + PERMISSION_CHECKLIST };
+      }
+      return { ok: true };
+    } catch (err) {
+      // 권한 확인 자체가 실패해도(예: 네트워크 문제) 커밋 시도는 막지 않고 그대로 진행함.
+      return { ok: true };
+    }
+  }
+
   async function loadFromGitHub() {
     const s = saveSettings();
     if (!s.owner || !s.repo) {
@@ -160,6 +203,13 @@
       showStatus($commitStatus, "커밋하려면 write 권한이 있는 토큰이 필요합니다. 없다면 아래 다운로드 버튼으로 파일을 받아 수동으로 커밋하세요.", "err");
       return;
     }
+    showStatus($commitStatus, "권한 확인 중...", "info");
+    const access = await checkTokenAccess(s);
+    if (!access.ok) {
+      showStatus($commitStatus, "커밋 실패: " + access.reason, "err");
+      return;
+    }
+
     showStatus($commitStatus, "커밋하는 중...", "info");
     try {
       const content = JSON.stringify({ collections: data.collections, entries: data.entries }, null, 2);
@@ -180,7 +230,12 @@
         body: JSON.stringify(body),
       });
       const json = await res.json();
-      if (!res.ok) throw new Error(json.message || ("HTTP " + res.status));
+      if (!res.ok) {
+        const detail = res.status === 403 && /not accessible/i.test(json.message || "")
+          ? (json.message || "") + "\n\n" + PERMISSION_CHECKLIST
+          : (json.message || ("HTTP " + res.status));
+        throw new Error(detail);
+      }
       currentSha = json.content?.sha || currentSha;
       showStatus($commitStatus, "커밋 완료. GitHub Pages가 재배포되면 열람 페이지에 반영됩니다(수 분 소요).", "ok");
     } catch (err) {

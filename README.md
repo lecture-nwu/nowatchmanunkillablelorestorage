@@ -64,6 +64,25 @@ lore-viewer/
 5. 토큰을 사용하고 싶지 않다면 **entries.json 다운로드** 버튼으로 파일을 받아 GitHub 웹사이트에서
    `data/entries.json`을 직접 교체 업로드해도 동일하게 동작함.
 
+### "Resource not accessible by personal access token" 오류
+
+**GitHub에 커밋**을 눌렀을 때 이 오류가 뜬다면, 요청 자체는 GitHub에 정상 도달했지만 이 토큰으로는
+쓰기 권한이 없다고 GitHub가 거부한 것임(코드 버그가 아니라 토큰/저장소 설정 문제). admin.js는 이제
+커밋 전에 `GET /repos/{owner}/{repo}`로 이 토큰의 push 권한을 먼저 확인해 더 구체적인 원인을
+안내하도록 되어 있음. 그래도 막히면 아래를 순서대로 확인:
+
+1. 토큰을 만든 GitHub 계정이 이 저장소의 **소유자(owner)** 이거나, 아니라면 **Write 이상 권한을 가진
+   협업자(collaborator)** 로 초대되어 있는지. fine-grained PAT는 "외부 협업자(outside collaborator)"
+   권한만으로는 쓰기가 거부되는 경우가 많음(GitHub의 알려진 제약).
+2. 토큰 생성 화면의 **Resource owner** 가 이 저장소를 소유한 계정/조직과 정확히 일치하는지.
+3. **Repository access** 를 `Only select repositories`로 하고 이 저장소를 직접 선택했는지
+   (fine-grained PAT는 명시적으로 선택하지 않은 공개 저장소에는 기본적으로 읽기 권한만 부여됨).
+4. 권한 목록에서 **Contents** 가 `Read-only`가 아닌 `Read and write`로 되어 있는지.
+5. 저장소가 **조직(organization) 소유**라면, 조직 Settings → Personal access tokens에서
+   이 fine-grained 토큰이 관리자에게 승인(approve)되어 있는지 — 조직은 기본적으로 fine-grained PAT
+   접근에 소유자 승인을 요구하는 경우가 많음.
+6. 토큰이 만료되지 않았는지(만료 시엔 "Bad credentials"로 다르게 표시됨).
+
 ## 참고 / 보안
 
 - `admin.html`은 검색엔진 노출을 막아두었지만(`robots noindex`), 저장소가 **공개(public)** 라면
