@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LORE ARCHIVE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="starfield"></div>
+  <div class="void-glow"></div>
+
+  <div class="app">
+    <!-- 1열: 문서철 스파인 -->
+    <nav class="spine" id="spine">
+      <div class="spine__brand">LORE ARCHIVE</div>
+      <!-- 문서철 버튼이 JS로 채워집니다 -->
+    </nav>
+
+    <!-- 2열: 기록 목록 -->
+    <aside class="roster">
+      <div class="roster__header">
+        <h1 class="roster__title" id="rosterTitle">기록 보관소</h1>
+        <p class="roster__desc" id="rosterDesc">문서철을 선택해 기록을 열람하세요.</p>
+        <span class="roster__count" id="rosterCount">0건</span>
+      </div>
+      <ul class="roster__list" id="rosterList"></ul>
+    </aside>
+
+    <!-- 3열: 열람 패널 -->
+    <main class="reader" id="reader">
+      <div class="reader__empty" id="readerEmpty">
+        <div class="reader__empty-mark">✦</div>
+        <div class="reader__empty-text">왼쪽 목록에서 기록을 선택하면<br>내용이 이곳에 표시됩니다.</div>
+      </div>
+      <div class="reader__inner" id="readerInner" style="display:none;"></div>
+    </main>
+  </div>
+
+  <script src="assets/viewer.js"></script>
+</body>
+</html>

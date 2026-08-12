@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LORE ARCHIVE — 관리자</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body class="admin-body">
+  <div class="starfield"></div>
+  <div class="void-glow"></div>
+
+  <div class="admin">
+    <div class="admin__header">
+      <h1 class="admin__title">기록 관리자</h1>
+      <p class="admin__desc">
+        이 페이지에서 작성한 내용은 <strong>data/entries.json</strong>에 저장되며,
+        저장(커밋) 시 열람 페이지(index.html)에 자동으로 반영됩니다.
+        이 페이지는 검색엔진에 노출되지 않도록 설정되어 있지만, 공개 저장소라면
+        URL을 아는 누구나 접근할 수 있으니 참고하세요.
+      </p>
+    </div>
+
+    <!-- 저장소 연결 -->
+    <section class="card">
+      <h2 class="card__title">① 저장소 연결</h2>
+      <div class="field--row">
+        <div class="field">
+          <label for="ghOwner">GitHub 사용자명/조직</label>
+          <input id="ghOwner" placeholder="예: my-github-id">
+        </div>
+        <div class="field">
+          <label for="ghRepo">저장소 이름</label>
+          <input id="ghRepo" placeholder="예: lore-archive">
+        </div>
+      </div>
+      <div class="field--row">
+        <div class="field">
+          <label for="ghBranch">브랜치</label>
+          <input id="ghBranch" placeholder="main" value="main">
+        </div>
+        <div class="field">
+          <label for="ghPath">데이터 파일 경로</label>
+          <input id="ghPath" value="data/entries.json">
+        </div>
+      </div>
+      <div class="field">
+        <label for="ghToken">GitHub Personal Access Token (write 권한, 선택)</label>
+        <input id="ghToken" type="password" placeholder="ghp_xxxxx... (저장 시에만 필요)">
+        <p class="hint">
+          토큰은 이 브라우저의 localStorage에만 저장되며 어디로도 전송되지 않습니다(GitHub API 호출 제외).
+          "Fine-grained token"으로 발급하고 이 저장소에 대한 <strong>Contents: Read and write</strong> 권한만 부여하는 것을 권장합니다.
+          불러오기(공개 저장소)만 할 경우 토큰 없이도 가능합니다.
+          <a href="https://github.com/settings/tokens?type=beta" target="_blank" rel="noopener">토큰 발급 페이지 열기</a>
+        </p>
+      </div>
+      <div class="btn-row">
+        <button class="btn" id="btnSaveSettings">연결 정보 저장</button>
+        <button class="btn btn--ghost" id="btnLoad">저장소에서 불러오기</button>
+      </div>
+      <div class="status" id="settingsStatus"></div>
+    </section>
+
+    <!-- 문서철 관리 -->
+    <section class="card">
+      <h2 class="card__title">② 문서철(Collection) 관리</h2>
+      <div id="collectionList"></div>
+      <div class="field--row" style="margin-top:14px;">
+        <div class="field"><label>문서철 제목</label><input id="newCollTitle" placeholder="예: 제3권 · 사건 기록"></div>
+        <div class="field"><label>설명</label><input id="newCollDesc" placeholder="한 줄 설명(선택)"></div>
+      </div>
+      <button class="btn" id="btnAddColl">문서철 추가</button>
+    </section>
+
+    <!-- 기록 관리 -->
+    <section class="card">
+      <h2 class="card__title">③ 기록(Entry) 작성</h2>
+      <div class="field">
+        <label for="entryColl">소속 문서철</label>
+        <select id="entryColl"></select>
+      </div>
+      <div class="field"><label for="entryTitle">제목</label><input id="entryTitle" placeholder="기록 제목"></div>
+      <div class="field"><label for="entrySub">부제 / 출처</label><input id="entrySub" placeholder="예: — 이름 없는 기록관 (선택)"></div>
+      <div class="field"><label for="entryOrder">정렬 순서</label><input id="entryOrder" type="number" value="1"></div>
+      <div class="field"><label for="entryBody">본문 (빈 줄로 문단 구분)</label><textarea id="entryBody" placeholder="여기에 내용을 입력하세요."></textarea></div>
+      <div class="btn-row">
+        <button class="btn" id="btnSaveEntry">기록 추가</button>
+        <button class="btn btn--ghost" id="btnClearEntry" style="display:none;">편집 취소</button>
+      </div>
+    </section>
+
+    <!-- 기록 목록 -->
+    <section class="card">
+      <h2 class="card__title">④ 전체 기록 목록</h2>
+      <div id="entryList"></div>
+    </section>
+
+    <!-- 저장 -->
+    <section class="card">
+      <h2 class="card__title">⑤ 저장</h2>
+      <p class="hint">위 편집 내용은 이 브라우저에만 임시 보관됩니다. 아래 버튼으로 GitHub 저장소에 커밋해야 친구들에게 반영됩니다.</p>
+      <div class="btn-row">
+        <button class="btn" id="btnCommit">GitHub에 커밋</button>
+        <button class="btn btn--ghost" id="btnDownload">entries.json 다운로드(수동 업로드용)</button>
+      </div>
+      <div class="status" id="commitStatus"></div>
+    </section>
+  </div>
+
+  <script src="assets/admin.js"></script>
+</body>
+</html>
