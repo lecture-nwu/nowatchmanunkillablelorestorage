@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LORE ARCHIVE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="starfield"></div>
+  <div class="void-glow"></div>
+
+  <!-- 좌측 끝 호버 메뉴 -->
+  <div class="edge-trigger" id="edgeTrigger"></div>
+  <nav class="side-menu" id="sideMenu">
+    <div class="side-menu__tab" id="sideMenuTab" role="button" tabindex="0" aria-label="메뉴 열기">☰</div>
+    <div class="side-menu__panel">
+      <div class="side-menu__brand">LORE ARCHIVE</div>
+      <div class="side-menu__user" id="sideMenuUser">게스트로 열람 중</div>
+      <button class="side-menu__item" id="btnLogin" type="button">로그인</button>
+      <button class="side-menu__item" id="btnFavorites" type="button">즐겨찾기</button>
+      <button class="side-menu__item" id="btnTags" type="button">태그</button>
+      <div class="side-menu__divider"></div>
+      <button class="side-menu__item side-menu__item--admin" id="btnAdmin" type="button">관리자 페이지로 이동</button>
+    </div>
+  </nav>
+
+  <!-- 공용 모달 (로그인 / 관리자 비밀번호) -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal__title" id="modalTitle"></div>
+      <input class="modal__input" id="modalInput" autocomplete="off">
+      <div class="modal__error" id="modalError"></div>
+      <div class="modal__actions">
+        <button class="btn btn--ghost" id="modalCancel" type="button">취소</button>
+        <button class="btn" id="modalConfirm" type="button">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="app">
+    <!-- 1열: 문서철 스파인 -->
+    <nav class="spine" id="spine">
+      <div class="spine__brand">LORE ARCHIVE</div>
+      <!-- 문서철 버튼이 JS로 채워집니다 -->
+    </nav>
+
+    <!-- 2열: 기록 목록 -->
+    <aside class="roster">
+      <div class="roster__header">
+        <h1 class="roster__title" id="rosterTitle">기록 보관소</h1>
+        <p class="roster__desc" id="rosterDesc">문서철을 선택해 기록을 열람하세요.</p>
+        <span class="roster__count" id="rosterCount">0건</span>
+      </div>
+      <ul class="roster__list" id="rosterList"></ul>
+    </aside>
+
+    <!-- 3열: 열람 패널 -->
+    <main class="reader" id="reader">
+      <div class="reader__empty" id="readerEmpty">
+        <div class="reader__empty-mark">✦</div>
+        <div class="reader__empty-text">왼쪽 목록에서 기록을 선택하면<br>내용이 이곳에 표시됩니다.</div>
+      </div>
+      <div class="reader__inner" id="readerInner" style="display:none;"></div>
+    </main>
+  </div>
+
+  <script src="assets/marked.min.js"></script>
+  <script src="assets/purify.min.js"></script>
+  <script src="assets/viewer.js"></script>
+</body>
+</html>
